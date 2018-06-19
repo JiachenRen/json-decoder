@@ -68,7 +68,7 @@ public class Dictionary implements Node {
         if (match != null) {
             nodes.add(match);
         }
-        entries.forEach((str, node) -> nodes.addAll(node.find(str)));
+        entries.forEach((str, node) -> nodes.addAll(node.find(key)));
         return nodes;
     }
 

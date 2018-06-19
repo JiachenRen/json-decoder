@@ -11,7 +11,6 @@ public class JSONDecoder {
     public static Node decode(String json) throws JSONDecodeException {
         dict = new ArrayList<>();
         String processed = process(json);
-//        System.out.println(processed);
         return parse(processed);
     }
 
