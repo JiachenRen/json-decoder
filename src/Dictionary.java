@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -49,5 +49,31 @@ public class Dictionary implements Node {
 
     public String toString() {
         return encode();
+    }
+
+    public ArrayList<Node> remove(String key) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        Node removed = entries.remove(key);
+        if (removed != null) {
+            nodes.add(removed);
+        }
+        entries.forEach((str, node) -> nodes.addAll(node.remove(key)));
+        return nodes;
+    }
+
+    @Override
+    public ArrayList<Node> find(String key) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        Node match = entries.get(key);
+        if (match != null) {
+            nodes.add(match);
+        }
+        entries.forEach((str, node) -> nodes.addAll(node.find(str)));
+        return nodes;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return entries.isEmpty();
     }
 }

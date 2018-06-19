@@ -25,15 +25,32 @@ public class JSONDecoder {
 
     private static List genList(String processed) throws JSONDecodeException {
         List list = new List();
+        ArrayList<Node> nodes = new ArrayList<>();
+        StringBuilder plainList = new StringBuilder();
+        int idx = 0, endIdx = 0;
         while (processed.contains("{")) {
             int startIdx = processed.indexOf("{");
-            int endIdx = match(processed, startIdx, '}');
+            endIdx = match(processed, startIdx, '}');
+            plainList.append(processed, 0, startIdx);
             String dict = processed.substring(startIdx, endIdx + 1);
-            list.add(parse(dict));
+            nodes.add(parse(dict));
+            plainList.append("#").append(idx).append(",");
+            idx++;
             char c = processed.charAt(endIdx + 1);
             if (c == ']') break;
             else if (c == ',') processed = processed.substring(endIdx + 2);
             else throw new JSONDecodeException("syntax error");
+        }
+        plainList.append(processed, endIdx + 1, processed.length());
+        String segments[] = plainList.toString()
+                .replaceAll("[\\[\\]]", "")
+                .split(",");
+        for (String key: segments) {
+            if (key.isEmpty()) continue;
+            if (key.contains("#")) {
+                int index  = Integer.valueOf(key.replace("#", ""));
+                list.add(nodes.get(index));
+            } else list.add(lookup(key));
         }
         return list;
     }
@@ -43,6 +60,7 @@ public class JSONDecoder {
         int curIdx = 1, matchingIdx = 0, closingIdx = match(processed, 0, counterpart(processed.charAt(0)));
         while (processed.charAt(matchingIdx + 1) == ',' || matchingIdx == 0) {
             int colonIdx = processed.indexOf(':', curIdx);
+            if (colonIdx == -1) break; // Empty dictionary
             String key = processed.substring(curIdx, colonIdx);
             key = (String) lookup(key).get();
             int idx = colonIdx + 1;

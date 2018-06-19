@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 /**
@@ -7,7 +6,7 @@ import java.util.ArrayList;
 public class List implements Node {
     private ArrayList<Node> items;
 
-    List() {
+    public List() {
         items = new ArrayList<>();
     }
 
@@ -45,8 +44,31 @@ public class List implements Node {
     public boolean equals(Object other) {
         if (!(other instanceof List)) return false;
         ArrayList<Node> otherItems = ((List) other).items;
-        if ( items.containsAll(otherItems) && otherItems.containsAll(items))
-            return true;
-        return false;
+        return items.containsAll(otherItems) && otherItems.containsAll(items);
+    }
+
+    /**
+     * Recursively remove the given key value from all sub-nodes.
+     *
+     * @param key key value string
+     * @return removed nodes
+     */
+    @Override
+    public ArrayList<Node> remove(String key) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        items.forEach(item -> nodes.addAll(item.remove(key)));
+        return nodes;
+    }
+
+    @Override
+    public ArrayList<Node> find(String key) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        items.forEach(item -> nodes.addAll(item.find(key)));
+        return nodes;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 }
