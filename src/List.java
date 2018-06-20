@@ -10,7 +10,7 @@ public class List implements Node {
         items = new ArrayList<>();
     }
 
-    void add(Node item) {
+    public void add(Node item) {
         items.add(item);
     }
 

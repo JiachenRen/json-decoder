@@ -1,17 +1,17 @@
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Jiachen on 6/16/18.
  */
 public class Dictionary implements Node {
-    private HashMap<String, Node> entries;
+    private LinkedHashMap<String, Node> entries;
 
-    Dictionary() {
-        entries = new HashMap<>();
+    public Dictionary() {
+        entries = new LinkedHashMap<>();
     }
 
-    void define(String key, Node value) {
+    public void define(String key, Node value) {
         entries.put(key, value);
     }
 

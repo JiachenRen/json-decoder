@@ -44,10 +44,10 @@ public class JSONDecoder {
         String segments[] = plainList.toString()
                 .replaceAll("[\\[\\]]", "")
                 .split(",");
-        for (String key: segments) {
+        for (String key : segments) {
             if (key.isEmpty()) continue;
             if (key.contains("#")) {
-                int index  = Integer.valueOf(key.replace("#", ""));
+                int index = Integer.valueOf(key.replace("#", ""));
                 list.add(nodes.get(index));
             } else list.add(lookup(key));
         }
@@ -88,8 +88,15 @@ public class JSONDecoder {
                 String str = dict.get(Integer.valueOf(key.substring(1)));
                 str = removeUTFCharacters(str).toString();
                 return new Value(str);
-            } else if (key.equals("null")) return new Value(null);
-            else return new Value(Double.valueOf(key));
+            } else switch (key) {
+                case "null":
+                    return new Value(null);
+                case "true":
+                    return new Value(true);
+                case "false":
+                    return new Value(false);
+            }
+            return new Value(Double.valueOf(key));
         } catch (NumberFormatException e) {
             throw new JSONDecodeException(e.getMessage());
         }

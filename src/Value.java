@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Value implements Node {
     private Object value;
 
-    Value(Object o) {
+    public Value(Object o) {
         this.value = o;
     }
 
@@ -23,8 +23,22 @@ public class Value implements Node {
     public String encode() {
         if (value == null) return "null";
         if (value instanceof String) {
-            return "\"" + value + "\"";
+            return "\"" + process((String) value) + "\"";
         } else return value.toString();
+    }
+
+    private String process(String input) {
+        StringBuilder strBuilder = new StringBuilder();
+        for(int i = 0; i < input.length(); i++){
+            char ch = input.charAt(i);
+            if(ch == '\\'){
+                i++;
+                continue;
+            }
+            if(ch == '\"') strBuilder.append("\\\"");
+            else strBuilder.append(ch);
+        }
+        return strBuilder.toString();
     }
 
     @Override
