@@ -54,9 +54,9 @@ public class List implements Node {
      * @return removed nodes
      */
     @Override
-    public ArrayList<Node> remove(String key) {
+    public ArrayList<Node> removeAll(String key) {
         ArrayList<Node> nodes = new ArrayList<>();
-        items.forEach(item -> nodes.addAll(item.remove(key)));
+        items.forEach(item -> nodes.addAll(item.removeAll(key)));
         return nodes;
     }
 
@@ -68,7 +68,17 @@ public class List implements Node {
     }
 
     @Override
+    public void replaceAll(String key, Mapper<Node> mapper) {
+        items.forEach(item -> item.replaceAll(key, mapper));
+    }
+
+    @Override
     public boolean isEmpty() {
         return items.isEmpty();
+    }
+
+    @Override
+    public Node get(String key) {
+        return null;
     }
 }

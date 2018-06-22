@@ -7,10 +7,13 @@ import java.util.regex.Pattern;
  */
 public class JSONDecoder {
     private static ArrayList<String> dict;
+    public static boolean useMod;
+    public static Mod mod;
 
     public static Node decode(String json) throws JSONDecodeException {
         dict = new ArrayList<>();
         String processed = process(json);
+//        System.out.println(processed);
         return parse(processed);
     }
 
@@ -24,6 +27,7 @@ public class JSONDecoder {
 
     private static List genList(String processed) throws JSONDecodeException {
         List list = new List();
+        String preserved = processed;
         ArrayList<Node> nodes = new ArrayList<>();
         StringBuilder plainList = new StringBuilder();
         int idx = 0, endIdx = 0;
@@ -40,7 +44,12 @@ public class JSONDecoder {
             else if (c == ',') processed = processed.substring(endIdx + 2);
             else throw new JSONDecodeException("syntax error");
         }
-        plainList.append(processed, endIdx + 1, processed.length());
+        try {
+            plainList.append(processed, endIdx + 1, processed.length());
+        } catch (IndexOutOfBoundsException e) { // [a,b,]
+            plainList.append("]");
+        }
+
         String segments[] = plainList.toString()
                 .replaceAll("[\\[\\]]", "")
                 .split(",");
@@ -65,10 +74,14 @@ public class JSONDecoder {
             int idx = colonIdx + 1;
             char c = processed.charAt(idx);
             if (c == '{' || c == '[') {
-                matchingIdx = match(processed, idx, counterpart(c));
-                Node node = parse(processed.substring(idx, matchingIdx + 1));
-                dictionary.define(key, node);
-                curIdx = matchingIdx + 2;
+                try {
+                    matchingIdx = match(processed, idx, counterpart(c));
+                    Node node = parse(processed.substring(idx, matchingIdx + 1));
+                    dictionary.define(key, node);
+                    curIdx = matchingIdx + 2;
+                } catch (StringIndexOutOfBoundsException e) {
+                    throw new JSONDecodeException(e.getMessage());
+                }
             } else {
                 int commaIdx = processed.indexOf(',', curIdx);
                 boolean predicate = commaIdx > closingIdx || commaIdx == -1;
@@ -96,18 +109,26 @@ public class JSONDecoder {
                 case "false":
                     return new Value(false);
             }
+            if (useMod) {
+                Object obj = mod.process(key);
+                if (obj != null) return new Value(obj);
+            }
             return new Value(Double.valueOf(key));
         } catch (NumberFormatException e) {
             throw new JSONDecodeException(e.getMessage());
         }
     }
 
-    private static int match(String exp, int init, char close) {
+    private static int match(String exp, int init, char close) throws JSONDecodeException {
         char start = exp.charAt(init);
-        for (int i = init + 1; i < exp.length(); i++) {
-            char cur = exp.charAt(i);
-            if (cur == start) i = match(exp, i, close);
-            else if (cur == close) return i;
+        try {
+            for (int i = init + 1; i < exp.length(); i++) {
+                char cur = exp.charAt(i);
+                if (cur == start) i = match(exp, i, close);
+                else if (cur == close) return i;
+            }
+        } catch (StackOverflowError e) {
+            throw new JSONDecodeException(e.getMessage() + "; str = " + exp);
         }
         return -1;
     }
@@ -156,5 +177,20 @@ public class JSONDecoder {
         }
         matcher.appendTail(buf);
         return buf;
+    }
+
+    /**
+     * Replace JSON reserved characters with their corresponding unicode.
+     *
+     * @return a valid JSON String with its special characters replaced with unicode.
+     */
+    public static String jsonStringify(String str) {
+        String[] strs = "\",\\\\".split(",");
+        String[] unicode = "\\u022,\\005c".split(",");
+        for (int i = 0; i < strs.length; i++) {
+            String ch = strs[i];
+            str = str.replaceAll(ch,unicode[i]);
+        }
+        return str;
     }
 }

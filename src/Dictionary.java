@@ -51,13 +51,13 @@ public class Dictionary implements Node {
         return encode();
     }
 
-    public ArrayList<Node> remove(String key) {
+    public ArrayList<Node> removeAll(String key) {
         ArrayList<Node> nodes = new ArrayList<>();
         Node removed = entries.remove(key);
         if (removed != null) {
             nodes.add(removed);
         }
-        entries.forEach((str, node) -> nodes.addAll(node.remove(key)));
+        entries.forEach((str, node) -> nodes.addAll(node.removeAll(key)));
         return nodes;
     }
 
@@ -70,6 +70,15 @@ public class Dictionary implements Node {
         }
         entries.forEach((str, node) -> nodes.addAll(node.find(key)));
         return nodes;
+    }
+
+    @Override
+    public void replaceAll(String key, Mapper<Node> mapper) {
+        entries.forEach((str, node) -> node.replaceAll(key, mapper));
+        Node oldEntry = entries.get(key);
+        if (oldEntry != null) { // Entry does exist
+            entries.replace(key, mapper.map(oldEntry));
+        }
     }
 
     @Override

@@ -29,13 +29,13 @@ public class Value implements Node {
 
     private String process(String input) {
         StringBuilder strBuilder = new StringBuilder();
-        for(int i = 0; i < input.length(); i++){
+        for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
-            if(ch == '\\'){
+            if (ch == '\\') {
                 i++;
                 continue;
             }
-            if(ch == '\"') strBuilder.append("\\\"");
+            if (ch == '\"') strBuilder.append("\\\"");
             else strBuilder.append(ch);
         }
         return strBuilder.toString();
@@ -63,7 +63,7 @@ public class Value implements Node {
      * @return removed nodes
      */
     @Override
-    public ArrayList<Node> remove(String key) {
+    public ArrayList<Node> removeAll(String key) {
         return new ArrayList<>();
     }
 
@@ -73,8 +73,17 @@ public class Value implements Node {
     }
 
     @Override
+    public void replaceAll(String key, Mapper<Node> mapper) {
+    }
+
+    @Override
     public boolean isEmpty() {
         return value == null;
+    }
+
+    @Override
+    public Node get(String key) {
+        return null;
     }
 
 
