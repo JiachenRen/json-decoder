@@ -3,6 +3,7 @@ import java.util.ArrayList;
 /**
  * Created by Jiachen on 6/16/18.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class List implements Node {
     private ArrayList<Node> items;
 

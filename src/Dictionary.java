@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 /**
  * Created by Jiachen on 6/16/18.
  */
+@SuppressWarnings("WeakerAccess")
 public class Dictionary implements Node {
     private LinkedHashMap<String, Node> entries;
 

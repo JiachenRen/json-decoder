@@ -5,15 +5,15 @@ import java.util.regex.Pattern;
 /**
  * Created by Jiachen on 6/16/18.
  */
+@SuppressWarnings("unused")
 public class JSONDecoder {
     private static ArrayList<String> dict;
-    public static boolean useMod;
-    public static Mod mod;
+    private static boolean modEnabled;
+    private static Mod mod;
 
     public static Node decode(String json) throws JSONDecodeException {
         dict = new ArrayList<>();
         String processed = process(json);
-//        System.out.println(processed);
         return parse(processed);
     }
 
@@ -109,7 +109,7 @@ public class JSONDecoder {
                 case "false":
                     return new Value(false);
             }
-            if (useMod) {
+            if (modEnabled) {
                 Object obj = mod.process(key);
                 if (obj != null) return new Value(obj);
             }
@@ -189,8 +189,16 @@ public class JSONDecoder {
         String[] unicode = "\\u022,\\005c".split(",");
         for (int i = 0; i < strs.length; i++) {
             String ch = strs[i];
-            str = str.replaceAll(ch,unicode[i]);
+            str = str.replaceAll(ch, unicode[i]);
         }
         return str;
+    }
+
+    public void setModEnabled(boolean modEnabled) {
+        JSONDecoder.modEnabled = modEnabled;
+    }
+
+    public void setMod(Mod mod) {
+        JSONDecoder.mod = mod;
     }
 }
