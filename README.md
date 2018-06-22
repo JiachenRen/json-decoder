@@ -1,4 +1,4 @@
-# Super Light-Weight JSON Decoder
+# JSON Decoder
 A super light weight JSON library that handles JSON serialization and deserialization. 
 ## Usage
 ```java
